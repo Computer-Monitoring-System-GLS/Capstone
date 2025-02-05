@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+
+{% block title %}Summary{% endblock %}
+
+{% block content %}
+        <div id="info">
+             <p>Loading system information...</p>
+        </div>
+        <script>
+            // Fetch system information from the backend
+            fetch('/system_info/')
+                .then(response => response.json())
+                .then(data => {
+                    const infoDiv = document.getElementById('info');
+    
+                    // Clear loading message
+                    infoDiv.innerHTML = '';
+    
+                    //Summary
+                    if (data['Summary']) {
+                        const sumDiv = document.createElement('div');
+                        sumDiv.innerHTML = `
+                            <h2>Summary:</h2><br>
+                            <p><strong>Operating System:</strong> ${data['Summary']['Operating System'] || 'N/A'}</p><br>
+                            <p><strong>CPU:</strong> ${data['Summary']['CPU'] || 'N/A'}</p><br>
+                            <p><strong>RAM:</strong> ${data['Summary']['RAM'] || 'N/A'}</p><br>
+                            <p><strong>Motherboard:</strong> ${data['Summary']['Motherboard'] || 'N/A'}</p><br>
+                            <p><strong>Graphics:</strong> ${data['Summary']['Graphics'] || 'N/A'}</p><br>
+                            <p><strong>Storage:</strong> ${data['Summary']['Storage'] || 'N/A'}</p><br>
+                            <p><strong>Network IP Address:</strong> ${data['Summary']['Network'] || 'N/A'}</p><br>
+                            <p><strong>Audio:</strong> ${data['Summary']['Audio'] || 'N/A'}</p>
+                        `;
+                        infoDiv.appendChild(sumDiv);
+                    }
+                    // Handle potential error if no OS Info or CPU Info is available
+                    if (!data['Summary']) {
+                        const errorDiv = document.createElement('div');
+                        errorDiv.innerHTML = '<p>Unable to fetch system information.</p>';
+                        infoDiv.appendChild(errorDiv);
+                    }
+    
+                })
+                .catch(error => {
+                    const infoDiv = document.getElementById('info');
+                    infoDiv.innerHTML = '<p>Failed to load system information. Please try again later.</p>';
+                    console.error(error);
+                });
+        </script>
+    </main>
+</body>
+</html>
+{% endblock %}
