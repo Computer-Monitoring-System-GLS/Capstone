@@ -1,0 +1,100 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}CMT - System Monitor{% endblock %}</title>
+    <link href='https://fonts.googleapis.com/css?family=Inria Sans' rel='stylesheet'>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            text-decoration: none;
+        }
+        body {
+            font-family: 'Inria Sans';
+            background-color: #F0EFEA;
+            display: flex;
+        }
+        .sidebar {
+            margin-top: 70px;
+            margin-left: 210px;
+            width: 250px;
+            height: 580px;
+            background-color: #E7E5E0;
+            border-radius: 43px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+        }
+        .sidebar-title {
+            padding: 20px;
+            color: #4D5760;
+            font-size: 32px;
+        }
+        .sidebar-list {
+            list-style-type: none;
+        }
+        .sidebar-text {
+            margin-bottom: 15px;
+            margin-left: 50px;
+        }
+        .sidebar-a {
+            color: #4D5760;
+            font-family: 'Inria Sans';
+            font-size: 19px;
+        }
+        .logoutB {
+            color: #4D5760;
+            border-radius: 43px;
+            padding: 8px 16px;
+            margin-top: 15px;
+            background-color: #F0EFEA;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+            border: none;
+            font-size: 16px;
+        }
+        main {
+            width: 800px;
+            height: 580px;
+            margin-top: 70px;
+            margin-left: 40px;
+            background-color: #E7E5E0;
+            border-radius: 43px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+        }
+        .scroll-box {
+            width: 99%;
+            height: 99%;
+            overflow: auto;
+            padding: 10px;
+        }
+    </style>
+    {% block extra_head %}{% endblock %}
+</head>
+<body>
+    <aside class="sidebar">
+        <center><h1 class="sidebar-title">CMT</h1></center>
+        <nav>
+            <ul class="sidebar-list">
+                <li class="sidebar-text"><a class="sidebar-a" href="{% url 'summary' %}"><b>Summary</b></a></li>
+                <li class="sidebar-text"><a class="sidebar-a" href="{% url 'os' %}">OS</a></li>
+                <li class="sidebar-text"><a class="sidebar-a" href="{% url 'cpu' %}">CPU</a></li>
+                <li class="sidebar-text"><a class="sidebar-a" href="#">RAM</a></li>
+                <li class="sidebar-text"><a class="sidebar-a" href="#">Motherboard</a></li>
+                <li class="sidebar-text"><a class="sidebar-a" href="#">GPU</a></li>
+                <li class="sidebar-text"><a class="sidebar-a" href="#">Storage</a></li>
+                <li class="sidebar-text"><a class="sidebar-a" href="#">Audio</a></li>
+                <li class="sidebar-text"><a class="sidebar-a" href="#">Network</a></li>
+                <li class="sidebar-text"><a class="sidebar-a" href="#">Peripherals</a></li>
+                <li class="sidebar-text"><a class="sidebar-a" href="#">Apps Installed</a></li>
+                <center><button class="logoutB"><a class="sidebar-a" href="{% url 'login' %}"><b>Log out</b></a></button></center>
+            </ul>
+        </nav>
+    </aside>
+    <main>
+        <div class="scroll-box">
+            {% block content %}{% endblock %}
+        </div>
+    </main>
+</body>
+</html>
