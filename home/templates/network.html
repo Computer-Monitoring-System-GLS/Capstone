@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+
+{% block title %}Network Information{% endblock %}
+
+{% block content %}
+<div id="info">
+    <p>Loading system information...</p>
+</div>
+
+<script>
+    fetch('/system_info/')
+        .then(response => response.json())
+        .then(data => {
+            const infoDiv = document.getElementById('info');  
+            infoDiv.innerHTML = '';
+
+            if (data['Network Info']) {
+                const networkInfoDiv = document.createElement('div');
+                networkInfoDiv.innerHTML = `
+                    <h2>Network Info :</h2><br>
+                    <p><strong>Internet Connection Status :</strong><br>
+                    <p style="text-indent: 40px;"><strong>Name :</strong> ${data['Network Info']['Internet Name'] || 'N/A'}</p>
+                    <p style="text-indent: 40px;"><strong>Description :</strong> ${data['Network Info']['Internet ConnectStatus'] || 'N/A'}</p>
+                    <p><strong>Network Adapter :</strong><br>
+                    <p style="text-indent: 40px;"><strong>Name :</strong> ${data['Network Info']['Network Adapter Name'] || 'N/A'}</p>
+                    <p style="text-indent: 40px;"><strong>Net Enable :</strong> ${data['Network Info']['Network Adapter NetEnable'] || 'N/A'}</p>
+                    <p style="text-indent: 40px;"><strong>MAC Address :</strong> ${data['Network Info']['Network Adapter MACAddress'] || 'N/A'}</p>
+                    <p style="text-indent: 40px;"><strong>Speed :</strong> ${data['Network Info']['Network Adapter Speed'] || 'N/A'}</p>
+                    <p style="text-indent: 40px;"><strong>Description :</strong> ${data['Network Info']['Description'] || 'N/A'}</p>
+                    <p style="text-indent: 40px;"><strong>IP Address :</strong> ${data['Network Info']['IP Address'] || 'N/A'}</p>
+                    <p style="text-indent: 40px;"><strong>MAC Address :</strong> ${data['Network Info']['MAC Address'] || 'N/A'}</p>
+                    <p style="text-indent: 40px;"><strong>IP Gateway :</strong> ${data['Network Info']['IP Gateway'] || 'N/A'}</p>
+                    <p style="text-indent: 40px;"><strong>DNS Server :</strong> ${data['Network Info']['DNS Server'] || 'N/A'}</p>
+                    <p style="text-indent: 40px;"><strong>DHCP Server :</strong> ${data['Network Info']['DHCP Server'] || 'N/A'}</p>
+                    <p><strong>Wi-Fi Adapter :</strong><br>
+                    <p style="text-indent: 40px;"><strong>Name :</strong> ${data['Network Info']['Wi-Fi Name'] || 'N/A'}</p>
+                    <p style="text-indent: 40px;"><strong>MAC Address :</strong> ${data['Network Info']['Wi-Fi MACAddress'] || 'N/A'}</p>
+                    <p style="text-indent: 40px;"><strong>Speed :</strong> ${data['Network Info']['Wi-Fi Speed'] || 'N/A'}</p>
+                    <p><strong>Computer Name :</strong><br>
+                    <p style="text-indent: 40px;"><strong>NetBIOS Name :</strong> ${data['Network Info']['Computer Name'] || 'N/A'}</p>
+                    <p style="text-indent: 40px;"><strong>Workgroup :</strong> ${data['Network Info']['Computer Workgroup'] || 'N/A'}</p>
+                `;
+                infoDiv.appendChild(networkInfoDiv);
+            }
+
+            if (!data['Network Info']) {
+                const errorDiv = document.createElement('div');
+                errorDiv.innerHTML = '<p>Unable to fetch system information.</p>';
+                infoDiv.appendChild(errorDiv);
+            }
+        })
+        .catch(error => {
+            const infoDiv = document.getElementById('info');
+            infoDiv.innerHTML = '<p>Failed to load system information. Please try again later.</p>';
+            console.error(error);
+        });
+</script>
+{% endblock %}
+
+
+
+
+

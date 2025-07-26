@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+
+{% block title %}Storage Information{% endblock %}
+
+{% block content %}
+<div id="info">
+    <p>Loading system information...</p>
+</div>
+
+<script>
+    fetch('/system_info/')
+        .then(response => response.json())
+        .then(data => {
+            const infoDiv = document.getElementById('info');  
+            infoDiv.innerHTML = '';
+
+            if (data['Storage Info']) {
+                const storageInfoDiv = document.createElement('div');
+                storageInfoDiv.innerHTML = `
+                    <h2>Storage Info:</h2><br>
+                    <p><strong>Disk Drive :</strong><br>
+                    <p style="text-indent: 40px;"><strong>Device ID :</strong> ${data['Storage Info']['Disk Drive Device ID'] || 'N/A'}</p>
+                    <p style="text-indent: 40px;"><strong>Model :</strong> ${data['Storage Info']['Disk Drive Model'] || 'N/A'}</p>
+                    <p style="text-indent: 40px;"><strong>Size :</strong> ${data['Storage Info']['Disk Drive Size'] || 'N/A'}</p>
+                    <p style="text-indent: 40px;"><strong>Interface :</strong> ${data['Storage Info']['Disk Drive Interface'] || 'N/A'}</p>
+                    <p style="text-indent: 40px;"><strong>Status :</strong> ${data['Storage Info']['Disk Drive Status'] || 'N/A'}</p>
+                    <p style="text-indent: 40px;"><strong>Media Type :</strong> ${data['Storage Info']['Disk Drive Media Type'] || 'N/A'}</p><br>
+                    <p><strong>Partition :</strong><br>
+                    <p style="text-indent: 40px;"><strong>Name :</strong> ${data['Storage Info']['Partition Name'] || 'N/A'}</p>
+                    <p style="text-indent: 40px;"><strong>Index :</strong> ${data['Storage Info']['Partition Index'] || 'N/A'}</p>
+                    <p style="text-indent: 40px;"><strong>Boot :</strong> ${data['Storage Info']['Partition Boot'] || 'N/A'}</p>
+                    <p style="text-indent: 40px;"><strong>Size :</strong> ${data['Storage Info']['Partition Size'] || 'N/A'}</p><br>
+                    <p><strong>Logical Disk :</strong><br>
+                    <p style="text-indent: 40px;"><strong>Device ID :</strong> ${data['Storage Info']['Logical Disk Device ID'] || 'N/A'}</p>
+                    <p style="text-indent: 40px;"><strong>File System :</strong> ${data['Storage Info']['Logical Disk File System'] || 'N/A'}</p>
+                    <p style="text-indent: 40px;"><strong>Size :</strong> ${data['Storage Info']['Logical Disk Size'] || 'N/A'}</p>
+                    <p style="text-indent: 40px;"><strong>Free Space :</strong> ${data['Storage Info']['Logical Disk Free Space'] || 'N/A'}</p>
+                    <p style="text-indent: 40px;"><strong>Serial Number :</strong> ${data['Storage Info']['Logical Disk Volume Serial Number'] || 'N/A'}</p>
+                `;
+                infoDiv.appendChild(storageInfoDiv);
+            }
+
+            if (!data['Storage Info']) {
+                const errorDiv = document.createElement('div');
+                errorDiv.innerHTML = '<p>Unable to fetch system information.</p>';
+                infoDiv.appendChild(errorDiv);
+            }
+        })
+        .catch(error => {
+            const infoDiv = document.getElementById('info');
+            infoDiv.innerHTML = '<p>Failed to load system information. Please try again later.</p>';
+            console.error(error);
+        });
+</script>
+{% endblock %}

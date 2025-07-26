@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block title %}RAM Information{% endblock %}
+
+{% block content %}
+<div id="info">
+    <p>Loading system information...</p>
+</div>
+
+<script>
+    // Fetch system information from the backend
+    fetch('/system_info/')
+        .then(response => response.json())
+        .then(data => {
+            const infoDiv = document.getElementById('info');
+            infoDiv.innerHTML = '';
+
+            if (data['RAM Info']) {
+                const ramInfoDiv = document.createElement('div');
+                ramInfoDiv.innerHTML = `
+                    <h2>RAM Info:</h2><br>
+                        <p><strong>Total Physical Memory :</strong> ${data['RAM Info']['TotalPhysicalMemory'] || 'N/A'}</p><br>
+                        <p><strong>Total Visible Memory Size :</strong> ${data['RAM Info']['TotalVisibleMemorySize'] || 'N/A'}</p><br>
+                        <p><strong>Free Physical Memory :</strong> ${data['RAM Info']['FreePhysicalMemory'] || 'N/A'}</p><br>
+                        <p><strong>Total Virtual Memory Size :</strong> ${data['RAM Info']['TotalVirtualMemorySize'] || 'N/A'}</p><br>
+                        <p><strong>Free Virtual Memory :</strong> ${data['RAM Info']['FreeVirtualMemory'] || 'N/A'}</p><br>
+                        <p><strong>Capacity :</strong> ${data['RAM Info']['Capacity'] || 'N/A'}</p><br>
+                        <p><strong>Memory Type :</strong> ${data['RAM Info']['MemoryType'] || 'N/A'}</p><br>
+                        <p><strong>Speed :</strong> ${data['RAM Info']['Speed'] || 'N/A'}</p>
+                    `;
+                    infoDiv.appendChild(ramInfoDiv);
+                }
+                // Handle potential error if no OS Info or CPU Info is available
+                if (!data['RAM Info']) {
+                    const errorDiv = document.createElement('div');
+                    errorDiv.innerHTML = '<p>Unable to fetch system information.</p>';
+                    infoDiv.appendChild(errorDiv);
+                }
+    
+            })
+            .catch(error => {
+                const infoDiv = document.getElementById('info');
+                infoDiv.innerHTML = '<p>Failed to load system information. Please try again later.</p>';
+                console.error(error);
+            });
+    </script>
+{% endblock %}

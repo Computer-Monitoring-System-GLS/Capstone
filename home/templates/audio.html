@@ -1,0 +1,105 @@
+{% extends 'base.html' %}
+{% comment %} {% extends 'base.html' %}
+
+{% block title %}Audio Information{% endblock %}
+
+{% block content %}
+        <div id="info">
+             <p>Loading system information...</p>
+        </div>
+        <script>
+            // Fetch system information from the backend
+            fetch('/system_info/')
+                .then(response => response.json())
+                .then(data => {
+                    const infoDiv = document.getElementById('info');
+    
+                    // Clear loading message
+                    infoDiv.innerHTML = '';
+    
+                    if (data['Audio Info']) {
+                        const audioinfoDiv = document.createElement('div');
+                        audioinfoDiv.innerHTML = `
+                            <h2>Audio Info:</h2><br>
+                            <p><strong>Sound card :</strong><br>
+                            <p style="text-indent: 40px;">${data['Audio Info']['Sound Card'] || 'N/A'}</p>
+                            <p><strong>Playback Devices :</strong><br>
+                            <p style="text-indent: 40px;">${data['Audio Info']['Playback'] || 'N/A'}</p>
+                        `;
+                        infoDiv.appendChild(audioinfoDiv);
+                    }
+                    // Handle potential error if no OS Info or CPU Info is available
+                    if (!data['Audio Info']) {
+                        const errorDiv = document.createElement('div');
+                        errorDiv.innerHTML = '<p>Unable to fetch system information.</p>';
+                        infoDiv.appendChild(errorDiv);
+                    }
+    
+                })
+                .catch(error => {
+                    const infoDiv = document.getElementById('info');
+                    infoDiv.innerHTML = '<p>Failed to load system information. Please try again later.</p>';
+                    console.error(error);
+                });
+        </script>
+    </main>
+</body>
+</html>
+{% endblock %} {% endcomment %}
+
+
+
+
+{% block title %}Audio Information{% endblock %}
+
+{% block content %}
+        <div id="info">
+             <p>Loading system information...</p>
+        </div>
+        <script>
+            // Fetch system information from the backend
+            fetch('/system_info/')
+                .then(response => response.json())
+                .then(data => {
+                    const infoDiv = document.getElementById('info');
+        
+                    // Clear loading message
+                    infoDiv.innerHTML = '';
+        
+                    if (data['Audio Info']) {
+                        const soundCards = data['Audio Info']['Sound Card'] || [];
+                        const playbackDevices = data['Audio Info']['Playback'] || [];
+        
+                        const audioInfoHTML = `
+                            <h2>Audio Info:</h2>
+                            <br>
+                            
+                            <p><strong>Sound Cards:</strong></p>
+                            <ul>
+                                ${soundCards.length > 0 ? soundCards.map(card => `<li class="lists">${card}</li>`).join('') : '<li>Not Available</li>'}
+                            </ul>
+                            <br>
+        
+                            <p><strong>Playback Devices:</strong></p>
+                            <ul>
+                                ${playbackDevices.length > 0 ? playbackDevices.map(device => `<li class="lists">${device}</li>`).join('') : '<li>Not Available</li>'}
+                            </ul>
+                        `;
+        
+                        const audioInfoDiv = document.createElement('div');
+                        audioInfoDiv.innerHTML = audioInfoHTML;
+                        infoDiv.appendChild(audioInfoDiv);
+                    } else {
+                        infoDiv.innerHTML = '<p>Unable to fetch system information.</p>';
+                    }
+                })
+                .catch(error => {
+                    const infoDiv = document.getElementById('info');
+                    infoDiv.innerHTML = '<p>Failed to load system information. Please try again later.</p>';
+                    console.error(error);
+                });
+        </script>
+    </main>
+</body>
+</html>
+{% endblock %}

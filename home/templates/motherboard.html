@@ -1,0 +1,135 @@
+{% extends 'base.html' %}
+{% comment %} {% extends 'base.html' %}
+
+{% block title %}Motherboard Information{% endblock %}
+
+{% block content %}
+<div id="info">
+    <p>Loading system information...</p>
+</div>
+
+<script>
+    fetch('/system_info/')
+        .then(response => response.json())
+        .then(data => {
+            const infoDiv = document.getElementById('info');  
+            infoDiv.innerHTML = '';
+
+            if (data['Motherboard Info']) {
+                const motherboardInfoDiv = document.createElement('div');
+                motherboardInfoDiv.innerHTML = `
+                    <h2>Motherboard Info:</h2><br>
+                    <p><strong>Manufacturer :</strong> ${data['Motherboard Info']['Manufacturer'] || 'N/A'}</p><br>
+                    <p><strong>Product :</strong> ${data['Motherboard Info']['Product'] || 'N/A'}</p><br>
+                    <p><strong>Version :</strong> ${data['Motherboard Info']['Version'] || 'N/A'}</p><br>
+                    <p><strong>Serial Number :</strong> ${data['Motherboard Info']['Serial Number'] || 'N/A'}</p><br>
+                    <p><strong>Bios :</strong><br>
+                    <p style="text-indent: 40px;"><strong>Manufacturer :</strong> ${data['Motherboard Info']['Bios Manufacturer'] || 'N/A'}</p>
+                    <p style="text-indent: 40px;"><strong>Version :</strong> ${data['Motherboard Info']['Bios Version'] || 'N/A'}</p>
+                    <p style="text-indent: 40px;"><strong>Release Date :</strong> ${data['Motherboard Info']['Bios Release Date'] || 'N/A'}</p><br>
+                    <p><strong>Memory Chip :</strong><br>
+                    <p style="text-indent: 40px;"><strong>Manufacturer :</strong> ${data['Motherboard Info']['Memory Chip Manufacturer'] || 'N/A'}</p>
+                    <p style="text-indent: 40px;"><strong>Capacity :</strong> ${data['Motherboard Info']['Memory Chip Capacity'] || 'N/A'}</p>
+                    <p style="text-indent: 40px;"><strong>Device Locator :</strong> ${data['Motherboard Info']['Memory Chip Device Locator'] || 'N/A'}</p>
+                    <p style="text-indent: 40px;"><strong>Part Number :</strong> ${data['Motherboard Info']['Memory Chip Part Number'] || 'N/A'}</p>
+                    <p style="text-indent: 40px;"><strong>Speed :</strong> ${data['Motherboard Info']['Memory Chip Speed'] || 'N/A'}</p>
+                    <p style="text-indent: 40px;"><strong>Type :</strong> ${data['Motherboard Info']['Memory Chip Type'] || 'N/A'}</p><br>
+                    <p><strong>USB :</strong><br>
+                    <p style="text-indent: 40px;"><strong>Name :</strong> ${data['Motherboard Info']['USB Name'] || 'N/A'}</p>
+                    <p style="text-indent: 40px;"><strong>Description :</strong> ${data['Motherboard Info']['USB Description'] || 'N/A'}</p>
+                    <p style="text-indent: 40px;"><strong>Status :</strong> ${data['Motherboard Info']['USB Status'] || 'N/A'}</p><br>
+                    <p><strong>PCIe Slots :</strong><br>
+                    <p style="text-indent: 40px;"><strong>Name :</strong> ${data['Motherboard Info']['PCIe Name'] || 'N/A'}</p>
+                    <p style="text-indent: 40px;"><strong>Device ID :</strong> ${data['Motherboard Info']['PCIe Device ID'] || 'N/A'}</p>
+                    <p style="text-indent: 40px;"><strong>Manufacturer :</strong> ${data['Motherboard Info']['PCIe Manufacturer'] || 'N/A'}</p><br>
+                    <p><strong>Network Adapter :</strong><br>
+                    <p style="text-indent: 40px;"><strong>Name :</strong> ${data['Motherboard Info']['Network Adapter Name'] || 'N/A'}</p>
+                    <p style="text-indent: 40px;"><strong>NetConnection ID :</strong> ${data['Motherboard Info']['Network Adapter Net Connection ID'] || 'N/A'}</p>
+                    <p style="text-indent: 40px;"><strong>Adapter Type :</strong> ${data['Motherboard Info']['Network Adapter Type'] || 'N/A'}</p>
+                    <p style="text-indent: 40px;"><strong>MAC Address :</strong> ${data['Motherboard Info']['Network Adapter MACAddress'] || 'N/A'}</p>
+                `;
+                infoDiv.appendChild(motherboardInfoDiv);
+            }
+
+            if (!data['Motherboard Info']) {
+                const errorDiv = document.createElement('div');
+                errorDiv.innerHTML = '<p>Unable to fetch system information.</p>';
+                infoDiv.appendChild(errorDiv);
+            }
+        })
+        .catch(error => {
+            const infoDiv = document.getElementById('info');
+            infoDiv.innerHTML = '<p>Failed to load system information. Please try again later.</p>';
+            console.error(error);
+        });
+</script>
+{% endblock %} {% endcomment %}
+
+
+
+
+
+{% block title %}Motherboard Information{% endblock %}
+
+{% block content %}
+<div id="info">
+    <p>Loading system information...</p>
+</div>
+
+<script>
+    fetch('/system_info/')
+        .then(response => response.json())
+        .then(data => {
+            const infoDiv = document.getElementById('info');  
+            infoDiv.innerHTML = '';
+
+            if (data['Motherboard Info']) {
+                const motherboardInfoDiv = document.createElement('div');
+                motherboardInfoDiv.innerHTML = `
+                    <h2>Motherboard Info:</h2><br>
+                    <p><strong>Manufacturer:</strong> ${data['Motherboard Info']['Manufacturer'] || 'N/A'}</p>
+                    <p><strong>Product:</strong> ${data['Motherboard Info']['Product'] || 'N/A'}</p>
+                    <p><strong>Version:</strong> ${data['Motherboard Info']['Version'] || 'N/A'}</p>
+                    <p><strong>Serial Number:</strong> ${data['Motherboard Info']['Serial Number'] || 'N/A'}</p><br>
+                    
+                    <h3>BIOS</h3>
+                    <p><strong>Manufacturer:</strong> ${data['Motherboard Info']['Bios Manufacturer'] || 'N/A'}</p>
+                    <p><strong>Version:</strong> ${data['Motherboard Info']['Bios Version'] || 'N/A'}</p>
+                    <p><strong>Release Date:</strong> ${data['Motherboard Info']['Bios Release Date'] || 'N/A'}</p><br>
+
+                    <h3>Memory Chip</h3>
+                    <p><strong>Manufacturer:</strong> ${data['Motherboard Info']['Memory Chip Manufacturer'] || 'N/A'}</p>
+                    <p><strong>Capacity:</strong> ${data['Motherboard Info']['Memory Chip Capacity'] || 'N/A'}</p>
+                    <p><strong>Device Locator:</strong> ${data['Motherboard Info']['Memory Chip Device Locator'] || 'N/A'}</p>
+                    <p><strong>Part Number:</strong> ${data['Motherboard Info']['Memory Chip Part Number'] || 'N/A'}</p>
+                    <p><strong>Speed:</strong> ${data['Motherboard Info']['Memory Chip Speed'] || 'N/A'}</p>
+                    <p><strong>Type:</strong> ${data['Motherboard Info']['Memory Chip Type'] || 'N/A'}</p><br>
+
+                    <h3>USB</h3>
+                    <p><strong>Name:</strong> ${data['Motherboard Info']['USB Name'] || 'N/A'}</p>
+                    <p><strong>Description:</strong> ${data['Motherboard Info']['USB Description'] || 'N/A'}</p>
+                    <p><strong>Status:</strong> ${data['Motherboard Info']['USB Status'] || 'N/A'}</p><br>
+
+                    <h3>PCIe Slots</h3>
+                    <p><strong>Name:</strong> ${data['Motherboard Info']['PCIe Name'] || 'N/A'}</p>
+                    <p><strong>Device ID:</strong> ${data['Motherboard Info']['PCIe Device ID'] || 'N/A'}</p>
+                    <p><strong>Manufacturer:</strong> ${data['Motherboard Info']['PCIe Manufacturer'] || 'N/A'}</p><br>
+
+                    <h3>Network Adapter</h3>
+                    <p><strong>Name:</strong> ${data['Motherboard Info']['Network Adapter Name'] || 'N/A'}</p>
+                    <p><strong>Net Connection ID:</strong> ${data['Motherboard Info']['Network Adapter Net Connection ID'] || 'N/A'}</p>
+                    <p><strong>Adapter Type:</strong> ${data['Motherboard Info']['Network Adapter Type'] || 'N/A'}</p>
+                    <p><strong>MAC Address:</strong> ${data['Motherboard Info']['Network Adapter MACAddress'] || 'N/A'}</p>
+                `;
+                infoDiv.appendChild(motherboardInfoDiv);
+            } else {
+                infoDiv.innerHTML = '<p>Unable to fetch system information.</p>';
+            }
+        })
+        .catch(error => {
+            document.getElementById('info').innerHTML = '<p>Failed to load system information. Please try again later.</p>';
+            console.error(error);
+        });
+</script>
+
+{% endblock %}

@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+{% comment %} {% extends 'base.html' %}
+
+{% block title %}Software Installed{% endblock %}
+
+{% block content %}
+<div id="info">
+    <p>Loading system information...</p>
+</div>
+
+<script>
+    fetch('/system_info/')
+        .then(response => response.json())
+        .then(data => {
+            const infoDiv = document.getElementById('info');  
+            infoDiv.innerHTML = '';
+
+            if (data['Software Installed']) {
+                const softwareInfoDiv = document.createElement('div');
+                softwareInfoDiv.innerHTML = `
+                    <h2>Software Installed:</h2><br>
+                    <p><strong>Name :</strong><br> ${data['Software Installed']['Name'] || 'N/A'}<br></p>
+                `;
+                infoDiv.appendChild(softwareInfoDiv);
+            }
+
+            if (!data['Software Installed']) {
+                const errorDiv = document.createElement('div');
+                errorDiv.innerHTML = '<p>Unable to fetch system information.</p>';
+                infoDiv.appendChild(errorDiv);
+            }
+        })
+        .catch(error => {
+            const infoDiv = document.getElementById('info');
+            infoDiv.innerHTML = '<p>Failed to load system information. Please try again later.</p>';
+            console.error(error);
+        });
+</script>
+{% endblock %}
+{% endcomment %}
+
+
+{% block title %}Software Installed{% endblock %}
+
+{% block content %}
+
+<div id="info">
+    <p>Loading system information...</p>
+</div>
+
+<script>
+    fetch('/system_info/')
+        .then(response => response.json())
+        .then(data => {
+            const infoDiv = document.getElementById('info');  
+            infoDiv.innerHTML = '';
+
+            if (data['Software Installed'] && Array.isArray(data['Software Installed']['Name'])) {
+                const softwareNames = data['Software Installed']['Name'];
+
+                // Create a <ul> list with <li> items for each software name
+                const softwareListHTML = `
+                    <h2>Software Installed:</h2><br>
+                    <p><strong>Name :</strong></p>
+                    <ul>
+                        ${softwareNames.map(name => `<li class ="lists">${name}</li>`).join('')}
+                    </ul>
+                `;
+
+                const softwareInfoDiv = document.createElement('div');
+                softwareInfoDiv.innerHTML = softwareListHTML;
+                infoDiv.appendChild(softwareInfoDiv);
+            } else {
+                infoDiv.innerHTML = '<p>Unable to fetch system information.</p>';
+            }
+        })
+        .catch(error => {
+            const infoDiv = document.getElementById('info');
+            infoDiv.innerHTML = '<p>Failed to load system information. Please try again later.</p>';
+            console.error(error);
+        });
+</script>
+
+{% endblock %}

@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}My Computer Information{% endblock %}
+
+{% block content %}
+    <h2 style="text-align: center; margin-bottom: 15px;">My Computer Information</h2>
+
+    <div id="system-info" class="info-container">
+        <p>Loading your system details...</p>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            fetch("{% url 'my_device' %}")
+                .then(response => response.json())
+                .then(data => {
+                    const infoContainer = document.getElementById("system-info");
+                    infoContainer.innerHTML = "";
+
+                    if (data.error) {
+                        infoContainer.innerHTML = `<p style="color: red;">${data.error}</p>`;
+                    } else {
+                        let content = "<div class='info-box'>";
+                        Object.keys(data).forEach(category => {
+                            content += `<h3>${category}</h3><ul class='info-list'>`;
+                            Object.entries(data[category]).forEach(([key, value]) => {
+                                content += `<li><strong>${key}:</strong> ${value || 'N/A'}</li>`;
+                            });
+                            content += "</ul>";
+                        });
+                        content += "</div>";
+                        infoContainer.innerHTML = content;
+                    }
+                })
+                .catch(error => {
+                    document.getElementById("system-info").innerHTML = "<p style='color: red;'>Failed to load system information.</p>";
+                    console.error("Error fetching system info:", error);
+                });
+        });
+    </script>
+
+    <style>
+        .info-container {
+            background: #E7E5E0;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+            margin-top: 15px;
+        }
+        .info-box {
+            padding: 10px;
+        }
+        .info-list {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        .info-list li {
+            padding: 5px 0;
+            border-bottom: 1px solid #ccc;
+        }
+    </style>
+{% endblock %}

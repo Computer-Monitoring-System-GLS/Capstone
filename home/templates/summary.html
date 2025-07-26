@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+
+{% block title %}Network Devices{% endblock %}
+
+{% block content %}
+    
+    <div id="info">
+        <p>Loading system information...</p>
+    </div>
+
+    <script>
+        // Fetch network devices first
+        fetch('/devices/')
+            .then(response => response.json())
+            .then(data => {
+                const deviceList = document.getElementById('device-list');
+                deviceList.innerHTML = '';
+
+                if (data.devices.length === 0) {
+                    deviceList.innerHTML = '<li>No devices found.</li>';
+                } else {
+                    data.devices.forEach(device => {
+                        const li = document.createElement('li');
+                        li.innerHTML = `
+                            <a href="/device/${device.ip}/">
+                                ${device.ip} 
+                                ${device.is_self ? ' (Your Device)' : ''}
+                                ${device.has_ssh ? ' - SSH Available' : ''}
+                            </a>
+                        `;
+                        deviceList.appendChild(li);
+                    });
+                }
+            })
+            .catch(error => {
+                document.getElementById('device-list').innerHTML = '<li>Failed to load devices.</li>';
+                console.error(error);
+            });
+
+        // Fetch system summary after devices
+        fetch('/system_info/')
+            .then(response => response.json())
+            .then(data => {
+                const infoDiv = document.getElementById('info');
+                infoDiv.innerHTML = '';
+
+                if (data['Summary']) {
+                    const sumDiv = document.createElement('div');
+                    sumDiv.innerHTML = `
+                        <h2>Summary</h2><br>
+                        <p><strong>Operating System:</strong> ${data['Summary']['Operating System'] || 'N/A'}</p><br>
+                        <p><strong>CPU:</strong> ${data['Summary']['CPU'] || 'N/A'}</p><br>
+                        <p><strong>RAM:</strong> ${data['Summary']['RAM'] || 'N/A'}</p><br>
+                        <p><strong>Motherboard:</strong> ${data['Summary']['Motherboard'] || 'N/A'}</p><br>
+                        <p><strong>Graphics:</strong> ${data['Summary']['Graphics'] || 'N/A'}</p><br>
+                        <p><strong>Storage:</strong> ${data['Summary']['Storage'] || 'N/A'}</p><br>
+                        <p><strong>Network IP Address:</strong> ${data['Summary']['Network'] || 'N/A'}</p><br>
+                        <p><strong>Audio:</strong> ${data['Summary']['Audio'] || 'N/A'}</p><br>
+                    `;
+                    infoDiv.appendChild(sumDiv);
+                } else {
+                    infoDiv.innerHTML = '<p>Unable to fetch system information.</p>';
+                }
+            })
+            .catch(error => {
+                document.getElementById('info').innerHTML = '<p>Failed to load system information.</p>';
+                console.error(error);
+            });
+    </script>
+{% endblock %} 
+
+
+
+
+

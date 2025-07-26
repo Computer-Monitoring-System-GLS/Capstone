@@ -1,0 +1,144 @@
+{% extends 'base.html' %}
+{% comment %} {% extends 'base.html' %}
+
+{% block title %}Peripherals Information{% endblock %}
+
+{% block content %}
+<div id="info">
+    <p>Loading system information...</p>
+</div>
+
+<script>
+    fetch('/system_info/')
+        .then(response => response.json())
+        .then(data => {
+            const infoDiv = document.getElementById('info');  
+            infoDiv.innerHTML = '';
+
+            if (data['Peripherals Info']) {
+                const peripheralInfoDiv = document.createElement('div');
+                peripheralInfoDiv.innerHTML = `
+                    <h2>Peripherals Info :</h2><br>
+                    <p><strong>Keyboard :</strong><br>
+                    <p style="text-indent: 40px;"><strong>Name :</strong> ${data['Peripherals Info']['Keyboard Name'] || 'N/A'}</p>
+                    <p style="text-indent: 40px;"><strong>Description :</strong> ${data['Peripherals Info']['Keyboard Description'] || 'N/A'}</p>
+                    <p style="text-indent: 40px;"><strong>Device ID :</strong> ${data['Peripherals Info']['Keyboard DeviceID'] || 'N/A'}</p><br>
+                    <p><strong>MousePad/TouchPad :</strong><br>
+                    <p style="text-indent: 40px;"><strong>Name :</strong> ${data['Peripherals Info']['Mouse Name'] || 'N/A'}</p>
+                    <p style="text-indent: 40px;"><strong>Device ID :</strong> ${data['Peripherals Info']['Mouse DeviceID'] || 'N/A'}</p><br>   
+                    <p><strong>Printer :</strong><br>
+                    <p style="text-indent: 40px;"><strong>Name :</strong> ${data['Peripherals Info']['Printer Name'] || 'N/A'}</p>
+                    <p style="text-indent: 40px;"><strong>Port Name :</strong> ${data['Peripherals Info']['Port Name'] || 'N/A'}</p>
+                    <p style="text-indent: 40px;"><strong>Print Processor :</strong> ${data['Peripherals Info']['Print Processor'] || 'N/A'}</p>
+                    <p style="text-indent: 40px;"><strong>Driver Name :</strong> ${data['Peripherals Info']['Driver Name'] || 'N/A'}</p><br>
+                `;
+                infoDiv.appendChild(peripheralInfoDiv);
+            }
+
+            if (!data['Peripherals Info']) {
+                const errorDiv = document.createElement('div');
+                errorDiv.innerHTML = '<p>Unable to fetch system information.</p>';
+                infoDiv.appendChild(errorDiv);
+            }
+        })
+        .catch(error => {
+            const infoDiv = document.getElementById('info');
+            infoDiv.innerHTML = '<p>Failed to load system information. Please try again later.</p>';
+            console.error(error);
+        });
+</script>
+{% endblock %}
+{% endcomment %}
+
+
+
+
+
+
+{% block title %}Peripherals Installed{% endblock %}
+
+{% block content %}
+<div id="info">
+    <p>Loading system information...</p>
+</div>
+<script>
+    fetch('/system_info/')
+        .then(response => response.json())
+        .then(data => {
+            const infoDiv = document.getElementById('info');  
+            infoDiv.innerHTML = '';
+
+            if (data['Peripherals Info']) {
+                const keyboardList = data['Peripherals Info']['Keyboard'] || [];
+                const keyboardDescList = data['Peripherals Info']['Keyboard Description'] || [];
+                const keyboardIdList = data['Peripherals Info']['Keyboard DeviceID'] || [];
+                const mouseList = data['Peripherals Info']['Mouse'] || [];
+                const mouseIdList = data['Peripherals Info']['Mouse DeviceID'] || [];
+                const printerList = data['Peripherals Info']['Printer'] || [];
+                const portList = data['Peripherals Info']['Port Name'] || [];
+                const processorList = data['Peripherals Info']['Print Processor'] || [];
+                const driverList = data['Peripherals Info']['Driver Name'] || [];
+
+                const peripheralsHTML = `
+                    <h2>Peripherals Info:</h2>
+
+                    <p><strong>Keyboard:</strong></p>
+                    <ul>
+                        ${keyboardList.length ? keyboardList.map(item => `<li class="lists">${item}</li>`).join('') : '<li class="lists">Not Available</li>'}
+                    </ul>
+
+                    <p><strong>Keyboard Description:</strong></p>
+                    <ul>
+                        ${keyboardDescList.length ? keyboardDescList.map(item => `<li class="lists">${item}</li>`).join('') : '<li class="lists">Not Available</li>'}
+                    </ul>
+
+                    <p><strong>Keyboard Device ID:</strong></p>
+                    <ul>
+                        ${keyboardIdList.length ? keyboardIdList.map(item => `<li class="lists">${item}</li>`).join('') : '<li class="lists">Not Available</li>'}
+                    </ul>
+
+                    <p><strong>Mouse:</strong></p>
+                    <ul>
+                        ${mouseList.length ? mouseList.map(item => `<li class="lists">${item}</li>`).join('') : '<li class="lists">Not Available</li>'}
+                    </ul>
+
+                    <p><strong>Mouse Device ID:</strong></p>
+                    <ul>
+                        ${mouseIdList.length ? mouseIdList.map(item => `<li class="lists">${item}</li>`).join('') : '<li class="lists">Not Available</li>'}
+                    </ul>
+
+                    <p><strong>Printer:</strong></p>
+                    <ul>
+                        ${printerList.length ? printerList.map(item => `<li class="lists">${item}</li>`).join('') : '<li class="lists">Not Available</li>'}
+                    </ul>
+
+                    <p><strong>Port Name:</strong></p>
+                    <ul>
+                        ${portList.length ? portList.map(item => `<li class="lists">${item}</li>`).join('') : '<li class="lists">Not Available</li>'}
+                    </ul>
+
+                    <p><strong>Print Processor:</strong></p>
+                    <ul>
+                        ${processorList.length ? processorList.map(item => `<li class="lists">${item}</li>`).join('') : '<li class="lists">Not Available</li>'}
+                    </ul>
+
+                    <p><strong>Driver Name:</strong></p>
+                    <ul>
+                        ${driverList.length ? driverList.map(item => `<li class="lists">${item}</li>`).join('') : '<li class="lists">Not Available</li>'}
+                    </ul>
+                `;
+
+                const peripheralInfoDiv = document.createElement('div');
+                peripheralInfoDiv.innerHTML = peripheralsHTML;
+                infoDiv.appendChild(peripheralInfoDiv);
+            } else {
+                infoDiv.innerHTML = '<p>Unable to fetch system information.</p>';
+            }
+        })
+        .catch(error => {
+            const infoDiv = document.getElementById('info');
+            infoDiv.innerHTML = '<p>Failed to load system information. Please try again later.</p>';
+            console.error(error);
+        });
+</script>
+{% endblock %}

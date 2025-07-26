@@ -1,0 +1,1302 @@
+{% comment %} 
+<!DOCTYPE html>
+ <html lang="en">
+ <head>
+     <meta charset="UTF-8">
+     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     <title>Available Devices</title>
+     {% load static %}
+ 
+     <style>
+         * {
+             margin: 0;
+             padding: 0;
+             text-decoration: none;
+         }
+         
+         body {
+             font-family: 'Inria Sans', sans-serif;
+             background-color: #F0EFEA;
+             display: grid;
+             place-items: center; /* Centers content both horizontally and vertically */
+             height: 100vh;
+             color: rgb(54, 68, 83);
+         }
+         
+         .container {
+             background: #E7E5E0;
+             width: 800px;
+             height: 540px;
+             overflow-y: auto;  
+             border-radius: 43px;
+             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+             padding: 10px;
+         }
+         
+         h2 {
+             text-align: center;
+             font-family: 'Inria Sans', sans-serif;
+             margin: 10px 0px 15px 0px;
+         }
+         
+         .device-list {
+             display: grid;
+             grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+             gap: 10px;
+             justify-content: center;
+             padding: 10px;
+         }
+         
+         .device {
+             text-align: center;
+         }
+         
+         button {
+             border: none;
+             outline: none;
+             background: none;
+             width: 100px; /* Adjust as needed */
+             height: auto; /* Maintain aspect ratio */
+             cursor: pointer;
+             padding: 5px;
+             margin: 5px;
+         }
+         
+         .device img {
+             width: 60px; 
+             height: 60px;
+             width: auto;
+         }
+         
+         .device-info {
+             font-size: 14px;
+             color: #555;
+         }
+ 
+         /* Styling for the device info section */
+         #device-info {
+             background: #fff;
+             width: 800px;
+             padding: 10px;
+             margin-top: 20px;
+             border-radius: 10px;
+             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+             font-family: monospace;
+             white-space: pre-wrap;
+             word-wrap: break-word;
+         }
+     </style>
+ </head>
+ 
+ <body>
+     <div class="container">
+         <h2>Available Devices on the Network</h2>
+         <div class="device-list">
+             {% for device in devices %}
+             <div class="device">
+                 <button data-ip="{{ device.ip }}" onclick="fetchDeviceDetails('{{ device.ip }}')">
+                     <img src="{% static 'icons/pc.png' %}" alt="Device Icon">
+                     <div class="device-info">{{ device.ip }}</div>
+                 </button>
+             </div>
+             {% endfor %}
+         </div>
+     </div>
+ 
+     <!-- Client-specific system info -->
+     <div id="device-info">Loading your system data...</div>
+ 
+     <script>
+         function fetchDeviceDetails(ip) {
+             // Clear any previously stored credentials to ensure new input
+             sessionStorage.removeItem("ssh_username");
+             sessionStorage.removeItem("ssh_password");
+     
+             let username = prompt("Enter SSH Username for " + ip + ":");
+             if (!username) {
+                 alert("Username is required!");
+                 return;
+             }
+     
+             let password = prompt("Enter SSH Password for " + ip + ":");
+             if (!password) {
+                 alert("Password is required!");
+                 return;
+             }
+     
+             console.log(🔗 Fetching details for ${ip} as ${username});
+     
+             // Redirect to the device summary page with credentials
+             window.location.href = /device/${ip}/summary/?username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)};
+         }
+ 
+         function fetchClientData() {
+             fetch('/my-device/')
+                 .then(response => response.json())
+                 .then(data => {
+                     if (data.error) {
+                         document.getElementById("device-info").innerHTML = <p style="color: red;">${data.error}</p>;
+                     } else {
+                         document.getElementById("device-info").innerHTML = <pre>${JSON.stringify(data, null, 4)}</pre>;
+                     }
+                 })
+                 .catch(error => {
+                     document.getElementById("device-info").innerHTML = <p style="color: red;">Failed to load your device info.</p>;
+                     console.error(error);
+                 });
+         }
+ 
+         // Load the correct system info for the client on page load
+         window.onload = fetchClientData;
+     </script>
+ </body>
+ </html>  {% endcomment %}
+
+
+
+
+
+
+
+
+
+{% comment %} <!DOCTYPE html>
+ <html lang="en">
+ <head>
+     <meta charset="UTF-8">
+     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     <title>Available Devices</title>
+     {% load static %}
+ 
+     <style>
+         * {
+             margin: 0;
+             padding: 0;
+             text-decoration: none;
+         }
+         
+         body {
+             font-family: 'Inria Sans', sans-serif;
+             background-color: #F0EFEA;
+             display: grid;
+             place-items: center; /* Centers content both horizontally and vertically */
+             height: 100vh;
+             color: rgb(54, 68, 83);
+         }
+         
+         .container {
+             background: #E7E5E0;
+             width: 800px;
+             height: 540px;
+             overflow-y: auto;  
+             border-radius: 43px;
+             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+             padding: 10px;
+         }
+         
+         h2 {
+             text-align: center;
+             font-family: 'Inria Sans', sans-serif;
+             margin: 10px 0px 15px 0px;
+         }
+         
+         .device-list {
+             display: grid;
+             grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+             gap: 10px;
+             justify-content: center;
+             padding: 10px;
+         }
+         
+         .device {
+             text-align: center;
+         }
+         
+         button {
+             border: none;
+             outline: none;
+             background: none;
+             width: 100px; /* Adjust as needed */
+             height: auto; /* Maintain aspect ratio */
+             cursor: pointer;
+             padding: 5px;
+             margin: 5px;
+         }
+         
+         .device img {
+             width: 60px; 
+             height: 60px;
+             width: auto;
+         }
+         
+         .device-info {
+             font-size: 14px;
+             color: #555;
+         }
+ 
+         /* Styling for the device info section */
+         #device-info {
+             background: #fff;
+             width: 800px;
+             padding: 10px;
+             margin-top: 20px;
+             border-radius: 10px;
+             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+             font-family: monospace;
+             white-space: pre-wrap;
+             word-wrap: break-word;
+         }
+     </style>
+ </head>
+ 
+ <body>
+     <div class="container">
+         <h2>Available Devices on the Network</h2>
+         <div class="device-list">
+             {% for device in devices %}
+             <div class="device">
+                 <button data-ip="{{ device.ip }}" onclick="fetchDeviceDetails('{{ device.ip }}')">
+                     <img src="{% static 'icons/pc.png' %}" alt="Device Icon">
+                     <div class="device-info">{{ device.ip }}</div>
+                 </button>
+             </div>
+             {% endfor %}
+         </div>
+     </div>
+ 
+     <!-- Client-specific system info -->
+     <div id="device-info">Loading your system data...</div>
+ 
+     <script>
+         function fetchDeviceDetails(ip) {
+             // Clear any previously stored credentials to ensure new input
+             sessionStorage.removeItem("ssh_username");
+             sessionStorage.removeItem("ssh_password");
+     
+             let username = prompt("Enter SSH Username for " + ip + ":");
+             if (!username) {
+                 alert("Username is required!");
+                 return;
+             }
+     
+             let password = prompt("Enter SSH Password for " + ip + ":");
+             if (!password) {
+                 alert("Password is required!");
+                 return;
+             }
+     
+             console.log(`🔗 Fetching details for ${ip} as ${username}`);
+     
+             // Redirect to the device summary page with credentials
+             window.location.href = `/device/${ip}/summary/?username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`;
+         }
+ 
+         function fetchClientData() {
+             fetch('/my-device/')
+                 .then(response => response.json())
+                 .then(data => {
+                     if (data.error) {
+                         document.getElementById("device-info").innerHTML = `<p style="color: red;">${data.error}</p>`;
+                     } else {
+                         document.getElementById("device-info").innerHTML = `<pre>${JSON.stringify(data, null, 4)}</pre>`;
+                     }
+                 })
+                 .catch(error => {
+                     document.getElementById("device-info").innerHTML = `<p style="color: red;">Failed to load your device info.</p>`;
+                     console.error(error);
+                 });
+         }
+ 
+         // Load the correct system info for the client on page load
+         window.onload = fetchClientData;
+     </script>
+ </body>
+ </html>   {% endcomment %}
+
+
+
+
+
+
+
+
+
+{% comment %} <!DOCTYPE html>
+<html lang="en">
+<head>
+     <meta charset="UTF-8">
+     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     <title>Available Devices</title>
+     {% load static %}
+     <style>
+         * {
+             margin: 0;
+             padding: 0;
+             text-decoration: none;
+         }
+         body {
+             font-family: 'Inria Sans', sans-serif;
+             background-color: #F0EFEA;
+             display: flex;
+         }
+         .sidebar {
+             margin-top: 70px;
+             margin-left: 210px;
+             width: 250px;
+             height: 580px;
+             background-color: #E7E5E0;
+             border-radius: 43px;
+             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+             display: flex;
+             flex-direction: column;
+             align-items: center;
+             padding: 10px;
+             overflow: hidden;
+         }
+         .sidebar-title {
+             padding: 20px;
+             color: #4D5760;
+             font-size: 20px;
+             text-align: center;
+         }
+         .device-list {
+             width: 100%;
+             max-height: 450px;
+             overflow-y: auto;
+             display: flex;
+             flex-direction: column;
+             align-items: center;
+         }
+         .device {
+             text-align: center;
+             margin-bottom: 10px;
+         }
+         .deviceimg {
+             border: none;
+             background: none;
+             cursor: pointer;
+             padding: 5px;
+         }
+         .device img {
+             width: 60px;
+             height: 60px;
+         }
+         .device-info {
+             font-size: 14px;
+             color: #555;
+         }
+         main {
+             width: 800px;
+             height: 540px;
+             margin-top: 70px;
+             margin-left: 40px;
+             background-color: #E7E5E0;
+             color: #4D5760;
+             border-radius: 43px;
+             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+             overflow-y: auto;
+             overflow-x: hidden;
+             padding: 20px;
+         }
+         .scroll-box {
+             padding: 10px;
+         }
+         .logoutB {
+             color: #4D5760;
+             border-radius: 43px;
+             padding: 8px 16px;
+             margin-top: auto;
+             background-color: #F0EFEA;
+             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+             border: none;
+             font-size: 16px;
+             cursor: pointer;
+         }
+ 
+         #device-info {
+             background: #fff;
+             width: 800px;
+             padding: 10px;
+             margin-top: 20px;
+             border-radius: 10px;
+             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+             font-family: monospace;
+             white-space: pre-wrap;
+             word-wrap: break-word;
+         }
+         
+     </style>
+ </head>
+ <body>
+     <script>
+         function toggleIPList() {
+             let ipList = document.getElementById("ip-list");
+             ipList.style.display = ipList.style.display === "none" ? "block" : "none";
+         }
+         function fetchDeviceDetails(ip) {
+            let username = prompt("Enter SSH Username for " + ip + ":");
+            if (!username) {
+                alert("Username is required!");
+                return;
+            }
+        
+            let password = prompt("Enter SSH Password for " + ip + ":");
+            if (!password) {
+                alert("Password is required!");
+                return;
+            }
+        
+            console.log(`🔗 Fetching details for ${ip} as ${username}`);
+        
+            fetch(`/device/${ip}/?username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`, {
+                method: "GET",
+                headers: {
+                    "X-Requested-With": "XMLHttpRequest",  // Tell Django it's an AJAX request
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    document.getElementById("device-info").innerHTML = `<p style="color: red;">${data.error}</p>`;
+                } else {
+                    document.getElementById("device-info").innerHTML = `<pre>${JSON.stringify(data, null, 4)}</pre>`;
+                }
+            })
+            .catch(error => {
+                document.getElementById("device-info").innerHTML = `<p style="color: red;">Failed to load remote device info.</p>`;
+                console.error(error);
+            });
+        }        
+         function fetchClientData() {
+             fetch('/my-device/')
+                 .then(response => response.json())
+                 .then(data => {
+                     if (data.error) {
+                         document.getElementById("device-info").innerHTML = `<p style="color: red;">${data.error}</p>`;
+                     } else {
+                         document.getElementById("device-info").innerHTML = `<pre>${JSON.stringify(data, null, 4)}</pre>`;
+                     }
+                 })
+                 .catch(error => {
+                     document.getElementById("device-info").innerHTML = `<p style="color: red;">Failed to load your device info.</p>`;
+                     console.error(error);
+                 });
+         }
+         window.onload = fetchClientData;
+         function getCSRFToken() {
+            let cookieValue = null;
+            const name = 'csrftoken';
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let cookie of cookies) {
+                    const trimmed = cookie.trim();
+                    if (trimmed.startsWith(name + '=')) {
+                        cookieValue = decodeURIComponent(trimmed.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+     </script>
+ 
+     <aside class="sidebar">
+         <h6 class="sidebar-title">Available Devices</h6>
+         <div class="device">
+             <button class="deviceimg" onclick="toggleIPList()">
+                 <img src="{% static 'icons/pc.png' %}" alt="Device Icon">
+                 <div class="device-info">Click to view IPs</div>
+             </button>
+         </div>
+ 
+         <ul id="ip-list" class="device-list" style="display: none;">
+             {% for device in devices %}
+             <li class="device">
+                 <button class="deviceimg" onclick="fetchDeviceDetails('{{ device.ip }}')">
+                     <div class="device-info">{{ device.ip }}</div>
+                 </button>
+             </li>
+             {% endfor %}
+         </ul>
+ 
+         <button class="logoutB"><a href="{% url 'login' %}" style="text-decoration: none; color: inherit;">Log out</a></button>
+     </aside>
+ 
+     <main>
+         <div class="scroll-box">
+             <h4>Device Info</h4>
+             <div id="device-info">Click on ip address to get info</div>
+         </div>
+     </main>
+ </body>
+ </html>
+ {% endcomment %}
+
+
+
+
+
+
+
+ {% comment %} <!DOCTYPE html>
+ <html lang="en">
+ <head>
+     <meta charset="UTF-8">
+     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     <title>Available Devices</title>
+     {% load static %}
+     <style>
+         * {
+             margin: 0;
+             padding: 0;
+             text-decoration: none;
+         }
+         body {
+             font-family: 'Inria Sans', sans-serif;
+             background-color: #F0EFEA;
+             display: flex;
+         }
+         .sidebar {
+             margin-top: 70px;
+             margin-left: 210px;
+             width: 250px;
+             height: 580px;
+             background-color: #E7E5E0;
+             border-radius: 43px;
+             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+             display: flex;
+             flex-direction: column;
+             align-items: center;
+             padding: 10px;
+             overflow: hidden;
+         }
+         .sidebar-title {
+             padding: 20px;
+             color: #4D5760;
+             font-size: 20px;
+             text-align: center;
+         }
+         .device-list {
+             width: 100%;
+             max-height: 450px;
+             overflow-y: auto;
+             display: flex;
+             flex-direction: column;
+             align-items: center;
+         }
+         .device {
+             text-align: center;
+             margin-bottom: 10px;
+         }
+         .deviceimg {
+             border: none;
+             background: none;
+             cursor: pointer;
+             padding: 5px;
+         }
+         .device img {
+             width: 60px;
+             height: 60px;
+         }
+         .device-info {
+             font-size: 14px;
+             color: #555;
+         } 
+         .scroll-box {
+             padding: 10px;
+         }
+         .logoutB {
+             color: #4D5760;
+             border-radius: 43px;
+             padding: 8px 16px;
+             margin-top: auto;
+             background-color: #F0EFEA;
+             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+             border: none;
+             font-size: 16px;
+             cursor: pointer;
+         }
+        
+         #device-info {
+            width: 800px;
+             height: 540px;
+             margin-top: 70px;
+             margin-left: 40px;
+             background-color: #E7E5E0;
+             color: #4D5760;
+             border-radius: 43px;
+             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+             overflow-y: auto;
+             overflow-x: hidden;
+             padding: 20px;
+
+         }
+
+
+     </style>
+ </head>
+ <body>
+     <script>
+         function toggleIPList() {
+             let ipList = document.getElementById("ip-list");
+             ipList.style.display = ipList.style.display === "none" ? "block" : "none";
+         }
+ 
+         function fetchDeviceDetails(ip) {
+             let username = prompt("Enter SSH Username for " + ip + ":");
+             if (!username) {
+                 alert("Username is required!");
+                 return;
+             }
+ 
+             let password = prompt("Enter SSH Password for " + ip + ":");
+             if (!password) {
+                 alert("Password is required!");
+                 return;
+             }
+             console.log(`🔗 Fetching details for ${ip} as ${username}`);
+ 
+             window.location.href = `/device/${ip}/?username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`;
+ 
+         }
+ 
+         function fetchClientData() {
+             fetch('/my-device/')
+                 .then(response => response.json())
+                 .then(data => {
+                     if (data.error) {
+                         document.getElementById("device-info").innerHTML = `<p style="color: red;">${data.error}</p>`;
+                     } else {
+                         document.getElementById("device-info").innerHTML = `<pre>${JSON.stringify(data, null, 4)}</pre>`;
+                     }
+                 })
+                 .catch(error => {
+                     document.getElementById("device-info").innerHTML = `<p style="color: red;">Failed to load your device info.</p>`;
+                     console.error(error);
+                 });
+         }
+         window.onload = fetchClientData;
+     </script>
+ 
+     <aside class="sidebar">
+         <h6 class="sidebar-title">Available Devices</h6>
+         <div class="device">
+             <button class="deviceimg" onclick="toggleIPList()">
+                 <img src="{% static 'icons/pc.png' %}" alt="Device Icon">
+                 <div class="device-info">Click to view IPs</div>
+             </button>
+         </div>
+ 
+         <ul id="ip-list" class="device-list" style="display: none;">
+             {% for device in devices %}
+             <li class="device">
+                 <button class="deviceimg" onclick="fetchDeviceDetails('{{ device.ip }}')">
+                     <div class="device-info">{{ device.ip }}</div>
+                 </button>
+             </li>
+             {% endfor %}
+         </ul>
+ 
+         <button class="logoutB"><a href="{% url 'login' %}" style="text-decoration: none; color: inherit;">Log out</a></button>
+     </aside>
+ 
+     <main>
+         <div class="scroll-box">
+             <h4>Device Info</h4>
+             <div id="device-info">Click on ip address to get info</div>
+         </div>
+     </main>
+ </body>
+ </html> 
+ {% endcomment %}
+
+
+
+
+
+
+{% comment %} <!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="UTF-8">
+   <title>Available Devices</title>
+   {% load static %}
+   <style>
+     * {
+       margin: 0;
+       padding: 0;
+       text-decoration: none;
+     }
+ 
+     body {
+       font-family: 'Inria Sans', sans-serif;
+       background-color: #F0EFEA;
+       display: flex;
+     }
+ 
+     .sidebar {
+       margin-top: 70px;
+       margin-left: 210px;
+       width: 250px;
+       height: 580px;
+       background-color: #E7E5E0;
+       border-radius: 43px;
+       box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+       display: flex;
+       flex-direction: column;
+       align-items: center;
+       padding: 10px;
+       overflow: hidden;
+     }
+ 
+     .sidebar-title {
+       padding: 20px;
+       color: #4D5760;
+       font-size: 20px;
+       text-align: center;
+     }
+ 
+     .device-list {
+       width: 100%;
+       max-height: 450px;
+       overflow-y: auto;
+       display: flex;
+       flex-direction: column;
+       align-items: center;
+     }
+ 
+     .device {
+       text-align: center;
+       margin-bottom: 10px;
+     }
+ 
+     .deviceimg {
+       border: none;
+       background: none;
+       cursor: pointer;
+       padding: 5px;
+     }
+ 
+     .device img {
+       width: 60px;
+       height: 60px;
+     }
+ 
+     .device-info {
+       font-size: 14px;
+       color: #555;
+     }
+ 
+     .logoutB {
+       color: #4D5760;
+       border-radius: 43px;
+       padding: 8px 16px;
+       margin-top: auto;
+       margin-bottom: 10px;
+       background-color: #F0EFEA;
+       box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+       border: none;
+       font-size: 16px;
+       cursor: pointer;
+     }
+ 
+     main {
+       width: 800px;
+       height: 540px;
+       margin-top: 70px;
+       margin-left: 40px;
+       color: #4D5760;
+       border-radius: 43px;
+       overflow-y: auto;
+       overflow-x: hidden;
+       padding: 20px;
+     }
+ 
+     .accordion {
+       width: 100%;
+       max-width: 100%;
+       margin: 20px auto;
+     }
+ 
+     .accordion-item {
+       margin-bottom: 12px;
+       border-radius: 15px;
+       overflow: hidden;
+       box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.1),
+                   4px -4px 8px rgba(255, 255, 255, 0.6);
+     }
+ 
+     .accordion-header {
+       padding: 15px;
+       cursor: pointer;
+       background-color: #E7E5E0;
+       box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+       font-weight: bold;
+       color: #4D5760;
+       font-size: 20px;
+     }
+ 
+     .accordion-content {
+       text-decoration: none;
+       padding: 15px;
+       display: none;
+       background-color: rgb(239, 239, 236);
+       font-family: monospace;
+     }
+ 
+     .active .accordion-content {
+       display: block;
+     }
+ 
+     ul {
+         list-style-type: none;
+         padding-left: 0; /* Optional: removes default indentation */
+       }
+       
+ 
+   </style>
+ </head>
+ <body>
+ 
+ <script>
+   function toggleIPList() {
+     const ipList = document.getElementById("ip-list");
+     ipList.style.display = ipList.style.display === "none" ? "block" : "none";
+   }
+ 
+   function renderContent(content) {
+     if (typeof content === 'object' && content !== null) {
+       let html = '<ul>';
+       for (const key in content) {
+         if (typeof content[key] === 'object' && content[key] !== null) {
+           html += `<li><strong>${key}:</strong>${renderContent(content[key])}</li>`;
+         } else {
+           html += `<li><strong>${key}:</strong> ${content[key]}</li>`;
+         }
+       }
+       html += '</ul>';
+       return html;
+     } else {
+       return `<p>${content || 'No data available.'}</p>`;
+     }
+   }
+ 
+   function fetchDeviceDetails(ip) {
+     const username = prompt("Enter SSH Username for " + ip + ":");
+     if (!username) return alert("Username is required!");
+     const password = prompt("Enter SSH Password for " + ip + ":");
+     if (!password) return alert("Password is required!");
+ 
+     fetch(`/device/${ip}/?username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`, {
+       method: "GET",
+       headers: {
+         "X-Requested-With": "XMLHttpRequest",
+       }
+     })
+     .then(response => response.json())
+     .then(data => {
+       if (data.error) {
+         document.getElementById("device-info").innerHTML = `<p style="color: red;">${data.error}</p>`;
+       } else {
+         const sections = ['Summary', 'OS', 'CPU', 'Motherboard', 'Storage', 'Network', 'RAM', 'GPU', 'Audio', 'Peripherals', 'Software'];
+         let html = '<div class="accordion">';
+         sections.forEach(section => {
+           const content = data[section];
+           const formatted = renderContent(content);
+           html += `
+             <div class="accordion-item">
+               <div class="accordion-header">${section}</div>
+               <div class="accordion-content">${formatted}</div>
+             </div>`;
+         });
+         html += '</div>';
+         document.getElementById("device-info").innerHTML = html;
+ 
+         document.querySelectorAll('.accordion-header').forEach(header => {
+           header.addEventListener('click', () => {
+             header.parentElement.classList.toggle('active');
+           });
+         });
+       }
+     })
+     .catch(err => {
+       document.getElementById("device-info").innerHTML = `<p style="color: red;">Failed to load remote device info.</p>`;
+       console.error(err);
+     });
+   }
+ 
+   function fetchClientData() {
+     fetch('/my-device/')
+       .then(res => res.json())
+       .then(data => {
+         if (data.error) {
+           document.getElementById("device-info").innerHTML = `<p style="color: red;">${data.error}</p>`;
+         } else {
+           const sections = ['Summary', 'OS', 'CPU', 'Motherboard', 'Storage', 'Network', 'RAM', 'GPU', 'Audio', 'Peripherals', 'Software'];
+           let html = '<div class="accordion">';
+           sections.forEach(section => {
+             const content = data[section];
+             const formatted = renderContent(content);
+             html += `
+               <div class="accordion-item">
+                 <div class="accordion-header">${section}</div>
+                 <div class="accordion-content">${formatted}</div>
+               </div>`;
+           });
+           html += '</div>';
+           document.getElementById("device-info").innerHTML = html;
+ 
+           document.querySelectorAll('.accordion-header').forEach(header => {
+             header.addEventListener('click', () => {
+               header.parentElement.classList.toggle('active');
+             });
+           });
+         }
+       })
+       .catch(err => {
+         document.getElementById("device-info").innerHTML = `<p style="color: red;">Failed to load your device info.</p>`;
+         console.error(err);
+       });
+   }
+ 
+   window.onload = fetchClientData;
+ </script>
+ 
+ <aside class="sidebar">
+   <h6 class="sidebar-title">Available Devices</h6>
+   <div class="device">
+     <button class="deviceimg" onclick="toggleIPList()">
+       <img src="{% static 'icons/pc.png' %}" alt="Device Icon">
+       <div class="device-info">Click to view IPs</div>
+     </button>
+   </div>
+ 
+   <ul id="ip-list" class="device-list" style="display: none;">
+     {% for device in devices %}
+     <li class="device">
+       <button class="deviceimg" onclick="fetchDeviceDetails('{{ device.ip }}')">
+         <div class="device-info">{{ device.ip }}</div>
+       </button>
+     </li>
+     {% endfor %}
+   </ul>
+ 
+   <button class="logoutB"><a href="{% url 'login' %}" style="text-decoration: none; color: inherit;">Log out</a></button>
+ </aside>
+ 
+ <main>
+   <h4>Device Info</h4>
+   <div id="device-info">Loading your device info...</div>
+ </main>
+ 
+</body>
+</html>
+{% endcomment %}
+
+
+
+
+
+
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="UTF-8">
+   <title>Available Devices</title>
+   {% load static %}
+   <style>
+     * {
+       margin: 0;
+       padding: 0;
+       text-decoration: none;
+     }
+
+     body {
+       font-family: 'Inria Sans', sans-serif;
+       background-color: #F0EFEA;
+       display: flex;
+     }
+
+     .sidebar {
+       margin-top: 70px;
+       margin-left: 210px;
+       width: 250px;
+       height: 580px;
+       background-color: #E7E5E0;
+       border-radius: 43px;
+       box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+       display: flex;
+       flex-direction: column;
+       align-items: center;
+       padding: 10px;
+       overflow: hidden;
+     }
+
+     .sidebar-title {
+       padding: 20px;
+       color: #4D5760;
+       font-size: 20px;
+       text-align: center;
+     }
+
+     .device-list {
+       width: 100%;
+       max-height: 450px;
+       overflow-y: auto;
+       display: flex;
+       flex-direction: column;
+       align-items: center;
+     }
+
+     .device {
+       text-align: center;
+       margin-bottom: 10px;
+     }
+
+     .deviceimg {
+       border: none;
+       background: none;
+       cursor: pointer;
+       padding: 5px;
+     }
+
+     .device img {
+       width: 60px;
+       height: 60px;
+     }
+
+     .device-info {
+       font-size: 14px;
+       color: #555;
+     }
+
+     .logoutB {
+       color: #4D5760;
+       border-radius: 43px;
+       padding: 8px 16px;
+       margin-top: auto;
+       margin-bottom: 10px;
+       background-color: #F0EFEA;
+       box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+       border: none;
+       font-size: 16px;
+       cursor: pointer;
+     }
+
+     main {
+       width: 800px;
+       height: 540px;
+       margin-top: 70px;
+       margin-left: 40px;
+       color: #4D5760;
+       border-radius: 43px;
+       overflow-y: auto;
+       overflow-x: hidden;
+       padding: 20px;
+     }
+
+     .accordion {
+       width: 100%;
+       max-width: 100%;
+       margin: 20px auto;
+     }
+
+     .accordion-item {
+       margin-bottom: 12px;
+       border-radius: 15px;
+       overflow: hidden;
+       box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.1),
+                   4px -4px 8px rgba(255, 255, 255, 0.6);
+     }
+
+     .accordion-header {
+       padding: 15px;
+       cursor: pointer;
+       background-color: #E7E5E0;
+       box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+       font-weight: bold;
+       color: #4D5760;
+       font-size: 20px;
+     }
+
+     .accordion-content {
+       text-decoration: none;
+       padding: 15px;
+       display: none;
+       background-color: rgb(239, 239, 236);
+       font-family: monospace;
+     }
+
+     .active .accordion-content {
+       display: block;
+     }
+
+     ul {
+         list-style-type: none;
+         padding-left: 0;
+       }
+   </style>
+</head>
+<body>
+
+<script>
+  function toggleIPList() {
+    const ipList = document.getElementById("ip-list");
+    ipList.style.display = ipList.style.display === "none" ? "block" : "none";
+  }
+
+  function renderContent(content) {
+    if (typeof content === 'object' && content !== null) {
+      let html = '<ul>';
+      for (const key in content) {
+        if (typeof content[key] === 'object' && content[key] !== null) {
+          html += `<li><strong>${key}:</strong>${renderContent(content[key])}</li>`;
+        } else {
+          html += `<li><strong>${key}:</strong> ${content[key]}</li>`;
+        }
+      }
+      html += '</ul>';
+      return html;
+    } else {
+      return `<p>${content || 'No data available.'}</p>`;
+    }
+  }
+
+  function getCookie(name) {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(';').shift();
+  }
+
+  function fetchDeviceDetails(ip) {
+    const cookieKey = `ssh_credentials_${ip}`;
+    let credentials = getCookie(cookieKey);
+
+    if (!credentials) {
+      const username = prompt("Enter SSH Username for " + ip + ":");
+      if (!username) return alert("Username is required!");
+      const password = prompt("Enter SSH Password for " + ip + ":");
+      if (!password) return alert("Password is required!");
+
+      const encoded = btoa(JSON.stringify({ username, password }));
+      document.cookie = `${cookieKey}=${encoded}; path=/; max-age=86400`;
+      credentials = encoded;
+    }
+
+    const decoded = JSON.parse(atob(credentials));
+    const { username, password } = decoded;
+
+    fetch(`/device/${ip}/?username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`, {
+      method: "GET",
+      headers: {
+        "X-Requested-With": "XMLHttpRequest",
+      }
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.error) {
+        document.getElementById("device-info").innerHTML = `<p style="color: red;">${data.error}</p>`;
+      } else {
+        const sections = ['Summary', 'OS', 'CPU', 'Motherboard', 'Storage', 'Network', 'RAM', 'GPU', 'Audio', 'Peripherals', 'Software'];
+        let html = '<div class="accordion">';
+        sections.forEach(section => {
+          const content = data[section];
+          const formatted = renderContent(content);
+          html += `
+            <div class="accordion-item">
+              <div class="accordion-header">${section}</div>
+              <div class="accordion-content">${formatted}</div>
+            </div>`;
+        });
+        html += '</div>';
+        document.getElementById("device-info").innerHTML = html;
+
+        document.querySelectorAll('.accordion-header').forEach(header => {
+          header.addEventListener('click', () => {
+            header.parentElement.classList.toggle('active');
+          });
+        });
+      }
+    })
+    .catch(err => {
+      document.getElementById("device-info").innerHTML = `<p style="color: red;">Failed to load remote device info.</p>`;
+      console.error(err);
+    });
+  }
+
+  function fetchClientData() {
+    fetch('/my-device/')
+      .then(res => res.json())
+      .then(data => {
+        if (data.error) {
+          document.getElementById("device-info").innerHTML = `<p style="color: red;">${data.error}</p>`;
+        } else {
+          const sections = ['Summary', 'OS', 'CPU', 'Motherboard', 'Storage', 'Network', 'RAM', 'GPU', 'Audio', 'Peripherals', 'Software'];
+          let html = '<div class="accordion">';
+          sections.forEach(section => {
+            const content = data[section];
+            const formatted = renderContent(content);
+            html += `
+              <div class="accordion-item">
+                <div class="accordion-header">${section}</div>
+                <div class="accordion-content">${formatted}</div>
+              </div>`;
+          });
+          html += '</div>';
+          document.getElementById("device-info").innerHTML = html;
+
+          document.querySelectorAll('.accordion-header').forEach(header => {
+            header.addEventListener('click', () => {
+              header.parentElement.classList.toggle('active');
+            });
+          });
+        }
+      })
+      .catch(err => {
+        document.getElementById("device-info").innerHTML = `<p style="color: red;">Failed to load your device info.</p>`;
+        console.error(err);
+      });
+  }
+
+  window.onload = fetchClientData;
+</script>
+
+<aside class="sidebar">
+  <h6 class="sidebar-title">Available Devices</h6>
+  <div class="device">
+    <button class="deviceimg" onclick="toggleIPList()">
+      <img src="{% static 'icons/pc.png' %}" alt="Device Icon">
+      <div class="device-info">Click to view IPs</div>
+    </button>
+  </div>
+
+  <ul id="ip-list" class="device-list" style="display: none;">
+    {% for device in devices %}
+    <li class="device">
+      <button class="deviceimg" onclick="fetchDeviceDetails('{{ device.ip }}')">
+        <div class="device-info">{{ device.ip }}</div>
+      </button>
+    </li>
+    {% endfor %}
+  </ul>
+
+  <button class="logoutB"><a href="{% url 'login' %}" style="text-decoration: none; color: inherit;">Log out</a></button>
+</aside>
+
+<main>
+  <h4>Device Info</h4>
+  <div id="device-info">Loading your device info...</div>
+</main>
+
+</body>
+</html>
+
+
+
+
+

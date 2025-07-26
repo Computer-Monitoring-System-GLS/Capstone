@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+
+{% block title %}GPU Information{% endblock %}
+
+{% block content %}
+<div id="info">
+    <p>Loading system information...</p>
+</div>
+
+<script>
+    fetch('/system_info/')
+        .then(response => response.json())
+        .then(data => {
+            const infoDiv = document.getElementById('info');  
+            infoDiv.innerHTML = '';
+
+            if (data['GPU Info']) {
+                const gpuInfoDiv = document.createElement('div');
+                gpuInfoDiv.innerHTML = `
+                    <h2>GPU Info :</h2><br>
+                    <p><strong>Monitor :</strong><br>
+                    <p style="text-indent: 40px;"><strong>Caption :</strong> ${data['GPU Info']['Monitor Caption'] || 'N/A'}</p>
+                    <p style="text-indent: 40px;"><strong>DeviceID :</strong> ${data['GPU Info']['Monitor DeviceID'] || 'N/A'}</p>
+                    <p style="text-indent: 40px;"><strong>PNPDeviceID :</strong> ${data['GPU Info']['Monitor PNPDeviceID'] || 'N/A'}</p>
+                    <p><strong>GPU :</strong><br>
+                    <p style="text-indent: 40px;"><strong>Name :</strong> ${data['GPU Info']['GPU Name'] || 'N/A'}</p>
+                    <p style="text-indent: 40px;"><strong>Adapter Compatibility :</strong> ${data['GPU Info']['GPU AdapterCompatibility'] || 'N/A'}</p>
+                    <p style="text-indent: 40px;"><strong>PNPDeviceID :</strong> ${data['GPU Info']['GPU PNPDeviceID'] || 'N/A'}</p>
+                    <p style="text-indent: 40px;"><strong>Video Processor :</strong> ${data['GPU Info']['GPU VideoProcessor'] || 'N/A'}</p>
+                    <p style="text-indent: 40px;"><strong>Driver :</strong> ${data['GPU Info']['GPU Driver'] || 'N/A'}</p>
+                    <p style="text-indent: 40px;"><strong>Current Refresh Rate :</strong> ${data['GPU Info']['GPU CurrentRefreshRate'] || 'N/A'}</p>
+                    <p style="text-indent: 40px;"><strong>Current Horizontal Resolution :</strong> ${data['GPU Info']['GPU CurrentHorizontalResolution'] || 'N/A'}</p>
+                    <p style="text-indent: 40px;"><strong>Current Vertical Resolution :</strong> ${data['GPU Info']['GPU CurrentVerticalResolution'] || 'N/A'}</p>
+                    <p style="text-indent: 40px;"><strongCurrent Bits PerPixel :</strong> ${data['GPU Info']['GPU CurrentBitsPerPixel'] || 'N/A'}</p>
+                    <p style="text-indent: 40px;"><strong>Max Refresh Rate :</strong> ${data['GPU Info']['GPU MaxRefreshRate'] || 'N/A'}</p>
+                    <p style="text-indent: 40px;"><strong>Min Refresh Rate :</strong> ${data['GPU Info']['GPU MinRefreshRate'] || 'N/A'}</p>
+                    <p style="text-indent: 40px;"><strong>Video Mode Description :</strong> ${data['GPU Info']['GPU VideoModeDescription'] || 'N/A'}</p>
+                    <p style="text-indent: 40px;"><strong>Current Number Of Colors :</strong> ${data['GPU Info']['GPU CurrentNumberOfColors'] || 'N/A'}</p>
+                `;
+                infoDiv.appendChild(gpuInfoDiv);
+            }
+
+            if (!data['GPU Info']) {
+                const errorDiv = document.createElement('div');
+                errorDiv.innerHTML = '<p>Unable to fetch system information.</p>';
+                infoDiv.appendChild(errorDiv);
+            }
+        })
+        .catch(error => {
+            const infoDiv = document.getElementById('info');
+            infoDiv.innerHTML = '<p>Failed to load system information. Please try again later.</p>';
+            console.error(error);
+        });
+</script>
+{% endblock %}
+
+
+
+
+
